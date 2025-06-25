@@ -1,12 +1,11 @@
 import {
   Controller,
-  Get,
-  Post,
+  // Get,
+  // Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
+  // Patch,
+  // Param,
+  // Delete,
   ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -28,7 +27,9 @@ export class ProductsController {
 
   // @Get()
   @MessagePattern({ cmd: 'find_all_products' })
-  findAll(@Query() paginationDto: PaginationDto) {
+  // findAll(@Query() paginationDto: PaginationDto) {
+  findAll(@Payload() paginationDto: PaginationDto) {
+    console.log({ paginationDto });
     return this.productsService.findAll(paginationDto);
     // return {
     //   pagination: paginationDto.page,
@@ -40,7 +41,8 @@ export class ProductsController {
   @MessagePattern({ cmd: 'find_one_product' })
   // findOne(@Param('id') id: string) {
   findOne(@Payload('id', ParseIntPipe) id: number) {
-    return this.productsService.findOne(+id);
+    console.log(typeof id, id);
+    return this.productsService.findOne(id);
   }
 
   // @Patch(':id')
@@ -59,5 +61,10 @@ export class ProductsController {
   // remove(@Param('id', ParseIntPipe) id: number) {
   remove(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
+  }
+
+  @MessagePattern({ cmd: 'validate_products' })
+  validateProduct(@Payload() ids: number[]) {
+    return this.productsService.validateProducts(ids);
   }
 }
